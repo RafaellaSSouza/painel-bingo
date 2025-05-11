@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Painel de Bingo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f9f9f9;
+      transition: background-color 0.3s, color 0.3s;
+      margin: 0;
+      padding: 0;
+    }
+
+    .dark-mode {
+      background-color: #1e1e1e;
+      color: white;
+    }
+
+    #painel {
+      display: grid;
+      grid-template-columns: repeat(15, 1fr);
+      gap: 10px;
+      justify-content: center;
+      margin: 30px auto;
+      max-width: 1200px;
+    }
+
+    .numero {
+      width: 60px;
+      height: 60px;
+      background-color: lightgray;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .aceso {
+      background-color: yellow !important;
+    }
+
+    #controle {
+      margin-top: 30px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      margin: 0 10px;
+    }
+
+    .dark-mode .numero {
+      background-color: #444;
+      color: white;
+    }
+
+    .dark-mode .aceso {
+      background-color: orange !important;
+      color: black;
+    }
+
+    .dark-mode button {
+      background-color: #666;
+      color: white;
+      border: none;
+    }
+
+    #historico {
+      margin-top: 40px;
+      font-size: 20px;
+    }
+
+    #historico span {
+      display: inline-block;
+      background-color: #ddd;
+      padding: 10px 16px;
+      margin: 5px;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+
+    .dark-mode #historico span {
+      background-color: #555;
+      color: white;
+    }
+
+    /* Responsividade */
+    @media (max-width: 1200px) {
+      #painel {
+        grid-template-columns: repeat(10, 1fr); /* Reduz para 10 colunas em telas menores */
+      }
+      .numero {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+      }
+    }
+
+    @media (max-width: 900px) {
+      #painel {
+        grid-template-columns: repeat(7, 1fr); /* Reduz para 7 colunas em telas médias */
+      }
+      .numero {
+        width: 45px;
+        height: 45px;
+        font-size: 18px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      #painel {
+        grid-template-columns: repeat(5, 1fr); /* Reduz para 5 colunas em telas pequenas */
+      }
+      .numero {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+      }
+    }
+
+    @media (max-width: 400px) {
+      #painel {
+        grid-template-columns: repeat(4, 1fr); /* Reduz para 4 colunas em telas muito pequenas */
+      }
+      .numero {
+        width: 35px;
+        height: 35px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Painel de Bingo</h1>
+
+  <div id="painel"></div>
+
+  <div id="controle">
+    <button onclick="resetarPainel()">Resetar</button>
+    <button onclick="alternarTema()">Alternar Tema</button>
+    <button onclick="telaCheia()">Tela Cheia</button>
+  </div>
+
+  <div id="historico">
+    <h3>Últimos Números Marcados:</h3>
+    <div id="ultimosNumeros"></div>
+  </div>
+
+  <script>
+    const painel = document.getElementById("painel");
+    const ultimosNumerosDiv = document.getElementById("ultimosNumeros");
+    let historico = [];
+
+    // Criar os números de 1 a 75
+    for (let i = 1; i <= 75; i++) {
+      const div = document.createElement("div");
+      div.classList.add("numero");
+      div.id = "num" + i;
+      div.textContent = i;
+      div.addEventListener("click", () => marcarNumero(div, i));
+      painel.appendChild(div);
+    }
+
+    // Marcar/desmarcar e atualizar histórico
+    function marcarNumero(el, numero) {
+      el.classList.toggle("aceso");
+
+      if (el.classList.contains("aceso")) {
+        historico.unshift(numero);
+      } else {
+        historico = historico.filter(n => n !== numero);
+      }
+
+      atualizarHistorico(historico.slice(0, 5));
+    }
+
+    function atualizarHistorico(lista) {
+      ultimosNumerosDiv.innerHTML = "";
+      lista.forEach(num => {
+        const span = document.createElement("span");
+        span.textContent = num;
+        ultimosNumerosDiv.appendChild(span);
+      });
+    }
+
+    function resetarPainel() {
+      document.querySelectorAll(".numero").forEach(el => el.classList.remove("aceso"));
+      historico = [];
+      ultimosNumerosDiv.innerHTML = "";
+    }
+
+    function alternarTema() {
+      document.body.classList.toggle("dark-mode");
+    }
+
+    function telaCheia() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else {
+        document.exitFullscreen();
+      }
+    }
+  </script>
+</body>
+</html>
